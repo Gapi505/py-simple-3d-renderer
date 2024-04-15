@@ -24,6 +24,7 @@ def rotate(point, angle, origin=(0,0)):
     return qx, qy
 
 def drawline2d(p1,p2):
+    
     global screen
     p1 = (p1[0]+width//2,-p1[1]+height//2)
     p2 = (p2[0]+width//2,-p2[1]+height//2)
