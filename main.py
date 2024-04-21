@@ -1,5 +1,6 @@
 import pygame
 import math
+import time
 
 
 background_colour = (0,0,0)
@@ -14,6 +15,8 @@ camera = [[0,0,-200],[0,0]]
 proj_plane = 500
 
 
+drawcolor = (200,200,200)
+debug_sleep = False
 def rotate(point, angle, origin=(0,0)):
     angle = math.radians(angle)
     ox, oy = origin
@@ -28,12 +31,16 @@ def drawline2d(p1,p2):
     global screen
     p1 = (p1[0]+width//2,-p1[1]+height//2)
     p2 = (p2[0]+width//2,-p2[1]+height//2)
-    pygame.draw.line(screen,(200,200,200),p1,p2)
+    pygame.draw.line(screen,drawcolor,p1,p2)
+    if debug_sleep:
+        pygame.display.flip()
+        time.sleep(0.1)
 
 
 def drawline3d(p1,p2):
-    global camera
+    global camera, drawcolor
     campos = camera[0]
+    drawcolor = (200,200,200)
     p1 = project(p1)    
     p2 = project(p2)    
 
@@ -43,7 +50,7 @@ def drawline3d(p1,p2):
     drawline2d(p1,p2)
 
 def project(p):
-    global camera
+    global camera, drawcolor
     campos = camera[0]
     camrot = camera[1]
     x,y,z = (p[0]-campos[0],p[1]-campos[1],p[2]-campos[2])
@@ -52,10 +59,10 @@ def project(p):
 
 
     p = (x,y,z)
+    drawcolor = (200,200,200)
     
-
     if p[2] <= 0:
-        return 0
+        drawcolor = (255,0,0)
     try:
         x= (proj_plane/p[2])*p[0]
     except(ZeroDivisionError):
@@ -129,10 +136,13 @@ while running:
         camera[1][1] -= cam_rotspeed
     if keys[pygame.K_DOWN]:
         camera[1][1] += cam_rotspeed
-
-    print(camera)
-    
+    if keys[pygame.K_1]:
+                debug_sleep = True
+    else:
+                debug_sleep = False
     screen.fill(background_colour)
-    drawcube((0,0,0),(100,100,100))
+    for i in range (0,200,100):
+        for j in range (0,200,100):
+            drawcube((i,0,j),(100,100,100))
     pygame.display.flip()
     clock.tick(60)
